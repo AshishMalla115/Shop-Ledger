@@ -1,0 +1,21 @@
+# Maven
+target/
+**/target/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Spring Boot
+application-local.yml
+
+# Keep local secrets out of Git
+backend/src/main/resources/application.yaml
