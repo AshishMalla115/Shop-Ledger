@@ -1,0 +1,5 @@
+ALTER TYPE party_type
+ADD VALUE 'PURCHASER';
+
+ALTER TABLE party
+ALTER COLUMN phone_number SET NOT NULL;
