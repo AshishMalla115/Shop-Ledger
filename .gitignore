@@ -19,3 +19,5 @@ application-local.yml
 
 # Keep local secrets out of Git
 backend/src/main/resources/application.yaml
+
+docs/interview_prep.txt
