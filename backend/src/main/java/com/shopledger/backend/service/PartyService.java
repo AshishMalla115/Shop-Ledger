@@ -1,4 +1,3 @@
-
 package com.shopledger.backend.service;
 
 import java.util.List;
@@ -9,17 +8,22 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shopledger.backend.dto.request.PartyCreateRequest;
 import com.shopledger.backend.dto.response.PartyResponse;
 import com.shopledger.backend.entity.Party;
+import com.shopledger.backend.entity.PartyBalance;
 import com.shopledger.backend.repository.PartyRepository;
-
+import com.shopledger.backend.repository.PartyBalanceRepository;
 import com.shopledger.backend.exception.PartyNotFoundException;
 
 @Service
 public class PartyService {
 
     private final PartyRepository partyRepository;
+    private final PartyBalanceRepository partyBalanceRepository;
 
-    public PartyService(PartyRepository partyRepository) {
+    public PartyService(
+            PartyRepository partyRepository,
+            PartyBalanceRepository partyBalanceRepository) {
         this.partyRepository = partyRepository;
+        this.partyBalanceRepository = partyBalanceRepository;
     }
 
     @Transactional
@@ -29,6 +33,7 @@ public class PartyService {
             request.getPhoneNumber().trim(),
             request.getPartyType()
         );
+
         party.setGstNumber(request.getGstNumber());
         party.setDefaultDiscountPercentage(
             request.getDefaultDiscountPercentage() != null
@@ -38,6 +43,9 @@ public class PartyService {
         party.setAddress(request.getAddress());
 
         Party savedParty = partyRepository.save(party);
+
+        PartyBalance partyBalance = new PartyBalance(savedParty);
+        partyBalanceRepository.save(partyBalance);
 
         return toResponse(savedParty);
     }
@@ -52,7 +60,7 @@ public class PartyService {
 
     @Transactional(readOnly = true)
     public PartyResponse getPartyById(Long partyId) {
-       Party party = partyRepository.findById(partyId)
+        Party party = partyRepository.findById(partyId)
             .orElseThrow(() -> new PartyNotFoundException(partyId));
 
         return toResponse(party);
