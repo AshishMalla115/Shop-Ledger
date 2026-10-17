@@ -31,4 +31,5 @@ public interface PartyBalanceRepository
         Optional<PartyBalance> findByPartyIdForUpdate(
                 @Param("partyId") Long partyId
         );
+        Optional<PartyBalance> findByPartyId(Long partyId);
 }
