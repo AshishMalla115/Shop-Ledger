@@ -180,4 +180,27 @@ public class LedgerEvent {
             event.setNotes(notes);
             return event;
         }
+        public static LedgerEvent createSale(
+            Party party,
+            Item item,
+            Integer quantity,
+            BigDecimal unitPrice,
+            BigDecimal amount,
+            UUID idempotencyKey,
+            String createdBy,
+            String notes) {
+
+        LedgerEvent event = new LedgerEvent();
+        event.setParty(party);
+        event.setItem(item);
+        event.setEventType(LedgerEventType.SALE);
+        event.setQuantity(quantity);
+        event.setUnitPrice(unitPrice);
+        event.setAmount(amount);
+        event.setIdempotencyKey(idempotencyKey);
+        event.setCreatedBy(createdBy);
+        event.setNotes(notes);
+
+        return event;
+    }
 }

@@ -22,6 +22,7 @@ import com.shopledger.backend.repository.ItemStockRepository;
 import com.shopledger.backend.repository.LedgerEventRepository;
 import com.shopledger.backend.repository.PartyBalanceRepository;
 import com.shopledger.backend.repository.PartyRepository;
+import com.shopledger.backend.enums.LedgerEventType;
 
 @Service
 public class PurchaseService {
@@ -162,7 +163,8 @@ public class PurchaseService {
             PurchaseRequest request) {
 
         boolean sameRequest =
-                event.getParty().getPartyId().equals(request.getSupplierId())
+                event.getEventType() == LedgerEventType.PURCHASE_RECEIVED
+                && event.getParty().getPartyId().equals(request.getSupplierId())
                 && event.getItem() != null
                 && event.getItem().getItemId().equals(request.getItemId())
                 && event.getQuantity().equals(request.getQuantity())
