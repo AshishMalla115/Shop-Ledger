@@ -14,6 +14,7 @@ import com.shopledger.backend.entity.LedgerEvent;
 import com.shopledger.backend.entity.Party;
 import com.shopledger.backend.entity.PartyBalance;
 import com.shopledger.backend.enums.PartyType;
+import com.shopledger.backend.exception.IdempotencyConflictException;
 import com.shopledger.backend.exception.ItemNotFoundException;
 import com.shopledger.backend.exception.PartyNotFoundException;
 import com.shopledger.backend.repository.ItemRepository;
@@ -168,7 +169,7 @@ public class PurchaseService {
                 && event.getUnitPrice().compareTo(request.getUnitCost()) == 0;
 
         if (!sameRequest) {
-            throw new IllegalArgumentException(
+            throw new IdempotencyConflictException(
                     "This idempotency key has already been used "
                     + "for a different purchase.");
         }
