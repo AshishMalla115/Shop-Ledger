@@ -229,4 +229,76 @@ class PaymentServiceTest {
                 .save(any(LedgerEvent.class));
         verify(partyBalanceRepository, never()).save(any(PartyBalance.class));
     }
+
+    @Test
+    void makePayment_rejectsPaymentMadeToPurchaser() {
+        PaymentRequest request = createRequest(
+                3L,
+                new BigDecimal("100.00"),
+                PaymentDirection.MADE);
+
+        when(ledgerEventRepository.findByIdempotencyKey(idempotencyKey))
+                .thenReturn(Optional.empty());
+
+        when(partyRepository.findById(3L))
+                .thenReturn(Optional.of(customer));
+
+        when(customer.isActive()).thenReturn(true);
+        when(customer.getPartyType()).thenReturn(PartyType.PURCHASER);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> paymentService.makePayment(request));
+
+        verify(ledgerEventRepository, never()).save(any(LedgerEvent.class));
+        verify(partyBalanceRepository, never()).save(any(PartyBalance.class));
+    }
+
+    @Test
+    void makePayment_rejectsInactiveParty() {
+        PaymentRequest request = createRequest(
+                1L,
+                new BigDecimal("100.00"),
+                PaymentDirection.MADE);
+
+        when(ledgerEventRepository.findByIdempotencyKey(idempotencyKey))
+                .thenReturn(Optional.empty());
+
+        when(partyRepository.findById(1L))
+                .thenReturn(Optional.of(supplier));
+
+        when(supplier.isActive()).thenReturn(false);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> paymentService.makePayment(request));
+
+        verify(ledgerEventRepository, never()).save(any(LedgerEvent.class));
+        verify(partyBalanceRepository, never()).save(any(PartyBalance.class));
+    }
+
+    @Test
+    void makePayment_rejectsPaymentReceivedFromSupplier() {
+        PaymentRequest request = createRequest(
+                1L,
+                new BigDecimal("100.00"),
+                PaymentDirection.RECEIVED);
+
+        when(ledgerEventRepository.findByIdempotencyKey(idempotencyKey))
+                .thenReturn(Optional.empty());
+
+        when(partyRepository.findById(1L))
+                .thenReturn(Optional.of(supplier));
+
+        when(supplier.isActive()).thenReturn(true);
+        when(supplier.getPartyType()).thenReturn(PartyType.SUPPLIER);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> paymentService.makePayment(request));
+
+        verify(ledgerEventRepository, never()).save(any(LedgerEvent.class));
+        verify(partyBalanceRepository, never()).save(any(PartyBalance.class));
+    }
+
 }

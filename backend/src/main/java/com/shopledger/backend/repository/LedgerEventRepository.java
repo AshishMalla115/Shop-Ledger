@@ -32,4 +32,5 @@ public interface LedgerEventRepository
     BigDecimal calculateBalanceByPartyId(
             @Param("partyId") Long partyId
     );
+    long countByIdempotencyKey(UUID idempotencyKey);
 }
