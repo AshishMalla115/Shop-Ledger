@@ -203,4 +203,38 @@ public class LedgerEvent {
 
         return event;
     }
+
+    public static LedgerEvent createPayment(
+            Party party,
+            LedgerEventType eventType,
+            BigDecimal amount,
+            UUID idempotencyKey,
+            String createdBy,
+            String notes) {
+
+        if (eventType != LedgerEventType.PAYMENT_MADE
+                && eventType != LedgerEventType.PAYMENT_RECEIVED) {
+            throw new IllegalArgumentException(
+                    "Payment event type must be PAYMENT_MADE or PAYMENT_RECEIVED.");
+        }
+
+        if (amount == null || amount.signum() >= 0) {
+            throw new IllegalArgumentException(
+                    "Payment ledger amount must be negative.");
+        }
+
+        LedgerEvent event = new LedgerEvent();
+        event.setParty(party);
+        event.setItem(null);
+        event.setEventType(eventType);
+        event.setQuantity(null);
+        event.setUnitPrice(null);
+        event.setAmount(amount);
+        event.setIdempotencyKey(idempotencyKey);
+        event.setCreatedBy(createdBy);
+        event.setNotes(notes);
+
+        return event;
+    }
+
 }
